@@ -2,7 +2,7 @@
 
 # Logging function
 log() {
-    echo "$(date +"%Y-%m-%d %T") - $1" >> backup.log
+    echo "$(date +"%Y-%m-%d %T") - $1" |& tee backup.log
 }
 
 # Error handling function
@@ -70,7 +70,7 @@ done
 BACKUP_COUNT=$(ls -ld /backup/container/*  | grep -v ^l | wc -l)
 BACKUP_COUNT=$((BACKUP_COUNT-$RETENTION))
 if [ $BACKUP_COUNT -gt 0 ]; then
-    ls -t /backup/container | tail -n $BACKUP_COUNT | xargs rm -rf -- /backup/container/
+    ls -t /backup/container | tail -n $BACKUP_COUNT | xargs -I {} rm -rf /backup/container/{}
 fi
 # backup /mnt
 restic -r /backup/restic-repo --password-file ./pass.txt --verbose backup  /mnt
@@ -85,7 +85,7 @@ if [ -d "/cloud" ]; then
 restic -r /backup/restic-repo --password-file ./pass.txt --verbose backup /cloud
 fi
 
-restic forget --keep-last $RETENTION -r /backup/restic-repo/
+restic --password-file ./pass.txt forget --keep-last $RETENTION -r /backup/restic-repo/
 
 log "Backup script finished successfully"
 
