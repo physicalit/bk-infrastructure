@@ -8,6 +8,7 @@ log() {
 # Error handling function
 handle_error() {
     log "Error: $1. Exiting script."
+    cat ./backup.log | mail -s "Backup Log - $DATE" giumsytec@gmail.com
     exit 1
 }
 
@@ -21,7 +22,7 @@ else
 fi
 
 # Check if required packages are installed:
-if command -v docker > /dev/null && command -v restic > /dev/null && command -v jq > /dev/null; then
+if command -v docker > /dev/null && command -v restic > /dev/null && command -v jq > /dev/null && command -v mailx > /dev/null; then
     log "All required packages are installed."
 else
     handle_error "One or more required packages are not installed"
@@ -87,3 +88,5 @@ fi
 restic forget --keep-last $RETENTION -r /backup/restic-repo/
 
 log "Backup script finished successfully"
+
+cat ./backup.log | mail -s "Backup Log - $DATE" giumsytec@gmail.com
