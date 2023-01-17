@@ -22,7 +22,7 @@ else
 fi
 
 # Check if required packages are installed:
-if command -v docker > /dev/null && command -v restic > /dev/null && command -v jq > /dev/null && command -v mailx > /dev/null; then
+if command -v docker > /dev/null && command -v restic > /dev/null && command -v jq > /dev/null && command -v mail > /dev/null; then
     log "All required packages are installed."
 else
     handle_error "One or more required packages are not installed"
