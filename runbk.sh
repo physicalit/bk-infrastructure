@@ -66,7 +66,7 @@ for CONTAINER in $CONTAINERS; do
 done
 
 # Retention of backups
-BACKUP_COUNT=$(ls -l /backup/container | grep -v ^l | wc -l)
+BACKUP_COUNT=$(ls -ld /backup/container/*  | grep -v ^l | wc -l)
 BACKUP_COUNT=$((BACKUP_COUNT-$RETENTION))
 if [ $BACKUP_COUNT -gt 0 ]; then
     ls -t /backup/container | tail -n $BACKUP_COUNT | xargs rm -rf -- /backup/container/
@@ -83,5 +83,7 @@ fi
 if [ -d "/cloud" ]; then
 restic -r /backup/restic-repo --password-file ./pass.txt --verbose backup /cloud
 fi
+
+restic forget --keep-last $RETENTION -r /backup/restic-repo/
 
 log "Backup script finished successfully"
